@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7F7A43031E65DE4800841AAB /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7A43021E65DE4800841AAB /* Models.swift */; };
+		7F7A43051E669E0A00841AAB /* BookCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7A43041E669E0A00841AAB /* BookCell.swift */; };
 		7F8424D11E349F37002EB13F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8424D01E349F37002EB13F /* AppDelegate.swift */; };
 		7F8424D31E349F37002EB13F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8424D21E349F37002EB13F /* ViewController.swift */; };
 		7F8424D81E349F37002EB13F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F8424D71E349F37002EB13F /* Assets.xcassets */; };
@@ -16,6 +17,7 @@
 
 /* Begin PBXFileReference section */
 		7F7A43021E65DE4800841AAB /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		7F7A43041E669E0A00841AAB /* BookCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookCell.swift; sourceTree = "<group>"; };
 		7F8424CD1E349F37002EB13F /* KindleDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KindleDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F8424D01E349F37002EB13F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7F8424D21E349F37002EB13F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -54,6 +56,7 @@
 		7F8424CF1E349F37002EB13F /* KindleDemo */ = {
 			isa = PBXGroup;
 			children = (
+				7F7A43041E669E0A00841AAB /* BookCell.swift */,
 				7F8424E21E349F4F002EB13F /* Supporting Files */,
 				7F8424D21E349F37002EB13F /* ViewController.swift */,
 				7F7A43021E65DE4800841AAB /* Models.swift */,
@@ -144,6 +147,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F7A43051E669E0A00841AAB /* BookCell.swift in Sources */,
 				7F7A43031E65DE4800841AAB /* Models.swift in Sources */,
 				7F8424D31E349F37002EB13F /* ViewController.swift in Sources */,
 				7F8424D11E349F37002EB13F /* AppDelegate.swift in Sources */,
