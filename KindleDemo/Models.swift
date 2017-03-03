@@ -11,14 +11,26 @@ import UIKit
 class Book {
     let author: String
     let title: String
-    let image: UIImage
     let pages: [Page]
+    let coverImageUrl: String
     
-    init(title: String, author: String, image: UIImage, pages: [Page]) {
-        self.title = title
-        self.author = author
-        self.image = image
-        self.pages = pages
+    init(dictionary: [String: Any]) {
+        self.title = dictionary["title"] as? String ?? ""
+        self.author = dictionary["author"] as? String ?? ""
+        self.coverImageUrl = dictionary["coverImageUrl"] as? String ?? ""
+     
+        var bookPages = [Page]()
+        if let pageDictionaries = dictionary["pages"] as? [[String: Any]] {
+            for pageDictionary in pageDictionaries {
+                let number = pageDictionary["id"] as? Int ?? -1
+                let text = pageDictionary["text"] as? String ?? ""
+                let page = Page(number: number, text: text)
+                
+                bookPages.append(page)
+            }
+        }
+        // the constant variable only initialize once
+        self.pages = bookPages
     }
 }
 

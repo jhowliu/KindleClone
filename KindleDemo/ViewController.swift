@@ -13,14 +13,77 @@ class ViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+       
+        setupNavBarStyles()
+        setupNavBarButtons()
         
         tableView.register(BookCell.self, forCellReuseIdentifier: "cellId")
         // Remove the unusable bottom line
         tableView.tableFooterView = UIView()
+        tableView.backgroundColor = UIColor(red: 80/255, green: 80/255, blue: 80/255, alpha: 1)
+        tableView.separatorColor = UIColor(white: 1, alpha: 0.2)
         
-        navigationItem.title = "Kindle"
+        navigationItem.title = "All Items"
         
         fetchBooks()
+    }
+    
+    func setupNavBarButtons() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "hamburger").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleMenuPressed))
+    }
+    
+    func setupNavBarStyles() {
+        navigationController?.navigationBar.barTintColor = UIColor(red: 40/255, green: 40/255, blue: 40/255, alpha: 1)
+        
+        // Navigation bars are translucent by default; that is, their background color is semitransparent
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footerView = UIView()
+        footerView.backgroundColor = UIColor(red: 40/255, green: 40/255, blue: 40/255, alpha: 1)
+        
+        let segmentControl = UISegmentedControl(items: ["Cloud", "Device"])
+        segmentControl.tintColor = .lightGray
+        segmentControl.selectedSegmentIndex = 0
+        segmentControl.translatesAutoresizingMaskIntoConstraints = false
+        
+        footerView.addSubview(segmentControl)
+        
+        segmentControl.widthAnchor.constraint(equalToConstant: 180).isActive = true
+        segmentControl.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        segmentControl.centerXAnchor.constraint(equalTo: footerView.centerXAnchor).isActive = true
+        segmentControl.centerYAnchor.constraint(equalTo: footerView.centerYAnchor).isActive = true
+       
+        let gridButton = UIButton(type: .system)
+        gridButton.setImage(#imageLiteral(resourceName: "gird").withRenderingMode(.alwaysOriginal), for: .normal)
+        gridButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        footerView.addSubview(gridButton)
+        
+        gridButton.leftAnchor.constraint(equalTo: footerView.leftAnchor, constant: 20).isActive = true
+        gridButton.centerYAnchor.constraint(equalTo: footerView.centerYAnchor, constant: 0).isActive = true
+        
+        
+        let sortButton = UIButton(type: .system)
+        sortButton.setImage(#imageLiteral(resourceName: "sort").withRenderingMode(.alwaysOriginal), for: .normal)
+        sortButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        footerView.addSubview(sortButton)
+      
+        sortButton.rightAnchor.constraint(equalTo: footerView.rightAnchor, constant: -20).isActive = true
+        sortButton.centerYAnchor.constraint(equalTo: footerView.centerYAnchor, constant: 0).isActive = true
+        
+        return footerView
+    }
+   
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 50
+    }
+    
+    func handleMenuPressed() {
+        print("Menu pressed")
     }
     // DataSource (Must)
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -35,10 +98,7 @@ class ViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let rows = books?.count {
-            return rows
-        }
-        return 0 
+        return self.books?.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -81,10 +141,8 @@ class ViewController: UITableViewController {
                     self.books = []
                     
                     for bookDictionary in bookDictionaries {
-                        if let title = bookDictionary["title"] as? String, let author = bookDictionary["author"] as? String {
-                            let book = Book(title: title, author: author, image: #imageLiteral(resourceName: "steve_jobs"), pages: [])
-                            self.books?.append(book)
-                        }
+                        let book = Book(dictionary: bookDictionary)
+                        self.books?.append(book)
                     }
                    
                     // use the main thread to reload UI in safety

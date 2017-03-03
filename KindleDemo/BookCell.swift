@@ -12,9 +12,29 @@ class BookCell: UITableViewCell {
     // Encapsulation
     var book: Book? {
         didSet {
-            coverImageView.image = book?.image
             titleLabel.text = book?.title
             authorLabel.text = book?.author
+            
+            coverImageView.image = nil
+           
+            guard let coverImageUrl = book?.coverImageUrl else { return }
+            guard let url = URL(string: coverImageUrl) else { return }
+        
+            URLSession.shared.dataTask(with: url) { (data, response, error) in
+                if let err = error {
+                    print("failed to download the cover image: ", err)
+                }
+                
+                guard let imageData = data else { return }
+                guard let image = UIImage(data: imageData) else { return }
+               
+                // update the cover image in the main thread
+                DispatchQueue.main.async {
+                    // if you call object in the other thread, you better to add the self to mark where you from
+                    self.coverImageView.image = image
+                }
+                
+            }.resume()
         }
     }
     // This syntax is the closure created and used in the same spot.
@@ -53,23 +73,29 @@ class BookCell: UITableViewCell {
            class.
         */
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+       
+        backgroundColor = .clear
         
         addSubview(coverImageView)
-        coverImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
+        coverImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 24).isActive = true
         coverImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 8).isActive = true
         coverImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -8).isActive = true
         coverImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
         
         addSubview(titleLabel)
+        titleLabel.textColor = .white
+        titleLabel.font = UIFont(name: titleLabel.font.fontName, size: 16)
         titleLabel.leftAnchor.constraint(equalTo: coverImageView.rightAnchor, constant: 8).isActive = true
         titleLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8).isActive = true
         titleLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         titleLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -10).isActive = true
                                                                
         addSubview(authorLabel)
+        authorLabel.textColor = .lightGray
+        authorLabel.font = UIFont(name: authorLabel.font.fontName, size: 14)
         authorLabel.leftAnchor.constraint(equalTo: coverImageView.rightAnchor, constant: 8).isActive = true
         authorLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8).isActive = true
-        authorLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4).isActive = true
+        authorLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: -2).isActive = true
         authorLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
                                                                 
         print("Cell is being initialized..")
