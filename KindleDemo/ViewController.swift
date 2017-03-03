@@ -20,13 +20,15 @@ class ViewController: UITableViewController {
         
         navigationItem.title = "Kindle"
         
-        setupBooks()
+        fetchBooks()
     }
     // DataSource (Must)
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath) as! BookCell
         // Question mark is to unwrap the optional varible
         let book = self.books?[indexPath.row]
+        
+        // The logic move to the model. (decrease the controller loading)
         cell.book = book
         
         return cell
@@ -43,14 +45,59 @@ class ViewController: UITableViewController {
         return 86
     }
     
-    fileprivate func setupBooks() {
-        let page1 = Page(number: 1, text: "Hello, my name is Steve.")
-        let page2 = Page(number: 2, text: "I'm CEO of the Apple.")
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let layout = UICollectionViewFlowLayout()
+        let bookPageController = BookPageController(collectionViewLayout: layout)
+        let navController = UINavigationController(rootViewController: bookPageController)
+       
+        if let selectedBook = self.books?[indexPath.row] {
+            bookPageController.book = selectedBook
+        }
         
-        let book1 = Book(title: "Steve Jobs", author: "Walter Isaacson", image:#imageLiteral(resourceName: "steve_jobs"), pages: [page1, page2])
-        let book2 = Book(title: "Bill Gates", author: "Michael Becraft", image: #imageLiteral(resourceName: "bill_gates"), pages: [page1, page2])
-        
-        self.books = [book1, book2]
+        present(navController, animated: true, completion: nil)
+    }
+    
+    fileprivate func fetchBooks() {
+        print("Start fetching the books")
+        // wraping the url with string
+        if let url = URL(string: "https://letsbuildthatapp-videos.s3-us-west-2.amazonaws.com/kindle.json") {
+            
+            // The beginning state of urlsession is stop, so we have to add resume() to start task.
+            URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
+               
+                if let err = error {
+                    print("Failed to fetch external json books: ", err)
+                    return
+                }
+               
+                // return if the data is nil
+                guard let data = data else { return }
+                
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
+                    guard let bookDictionaries = json as? [[String: Any]] else { return }
+                  
+                    // we have to set the books initial value because it's given the nil in the beginning of program.
+                    self.books = []
+                    
+                    for bookDictionary in bookDictionaries {
+                        if let title = bookDictionary["title"] as? String, let author = bookDictionary["author"] as? String {
+                            let book = Book(title: title, author: author, image: #imageLiteral(resourceName: "steve_jobs"), pages: [])
+                            self.books?.append(book)
+                        }
+                    }
+                   
+                    // use the main thread to reload UI in safety
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                    
+                } catch let jsonError {
+                    print("Failed to parse JSON property: ", jsonError)
+                }
+                
+            }).resume()
+        }
     }
     
 }
